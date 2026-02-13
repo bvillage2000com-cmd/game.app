@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="ja">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Admin</title>
+  <link rel="stylesheet" href="/style.css" />
+</head>
+
+<body>
+  <main class="wrap">
+    <div id="announcement" class="announcement hidden"></div>
+    <h1 id="adminTitle">管理ページ <span id="tenantName" style="font-size:0.6em; color:#a0aec0;"></span></h1>
+
+    <section class="card" id="loginBox">
+      <h2>ログイン</h2>
+      <div class="row">
+        <input id="username" placeholder="ユーザー名" />
+        <input id="password" placeholder="パスワード" type="password" />
+        <button id="loginBtn">ログイン</button>
+      </div>
+      <div id="loginMsg" class="msg"></div>
+    </section>
+
+    <section class="card hidden" id="adminBox">
+      <div class="row space">
+        <h2>画像登録（最大5枚）</h2>
+        <button id="logoutBtn">ログアウト</button>
+      </div>
+
+      <form id="uploadForm">
+        <div class="row">
+          <input type="file" name="image" accept="image/png,image/jpeg,image/webp" required />
+        </div>
+        <div class="row">
+          <label>開始日時</label>
+          <input type="datetime-local" id="startAt" required />
+          <label>終了日時</label>
+          <input type="datetime-local" id="endAt" required />
+        </div>
+        <button type="submit">登録</button>
+        <p class="hint" style="margin-top:8px; color:#e53e3e;">※ 登録した画像は3日（72時間）後に自動的に削除されます。</p>
+        <div id="uploadMsg" class="msg"></div>
+      </form>
+
+      <hr />
+
+      <details class="card" style="background:#0c1420;">
+        <summary style="cursor:pointer;">パスワード変更</summary>
+        <div style="margin-top:10px;">
+          <div class="row">
+            <input id="oldPass" type="password" placeholder="現在のパスワード" />
+            <input id="newPass" type="password" placeholder="新しいパスワード（6文字以上）" />
+            <button id="changePassBtn" type="button">変更</button>
+          </div>
+          <div id="passMsg" class="msg"></div>
+        </div>
+      </details>
+
+      <hr />
+
+      <h3>登録済み</h3>
+      <div id="list" class="list"></div>
+
+      <p class="hint">ゲームURL：<span id="gameUrl"></span></p>
+    </section>
+  </main>
+
+  <script src="/admin.js"></script>
+</body>
+
+</html>

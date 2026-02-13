@@ -1,0 +1,162 @@
+<!doctype html>
+<html lang="ja">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Master</title>
+  <link rel="stylesheet" href="/style.css" />
+</head>
+
+<body>
+  <main class="wrap">
+    <h1>マスター（あなた用）</h1>
+
+    <section class="card" id="masterLogin">
+      <h2>マスターログイン</h2>
+      <div class="row">
+        <input id="masterPass" type="password" placeholder="MASTER_PASS" />
+        <button id="masterLoginBtn">ログイン</button>
+      </div>
+      <div id="masterMsg" class="msg"></div>
+    </section>
+
+    <section class="card hidden" id="masterPanel">
+      <div class="row space">
+        <h2>マスター管理パネル</h2>
+        <button id="masterLogoutBtn">ログアウト</button>
+      </div>
+
+      <!-- 1. Global Announcement -->
+      <section class="card" style="border:1px solid #ecc94b; background:#1a202c; margin-bottom: 20px;">
+        <h3>1. 全体へのお知らせ（一斉送信）</h3>
+        <p class="hint">全ての店舗のお知らせをこの内容で上書きします。</p>
+        <div style="margin-top:10px;">
+          <textarea id="broadcastAnnouncement" rows="3"
+            style="width:100%; box-sizing:border-box; background:#0c1420; color:#fff; border:1px solid #2a3950; border-radius:8px; padding:8px;"></textarea>
+        </div>
+        <div class="row" style="margin-top:10px;">
+          <button id="broadcastBtn" style="background:#ecc94b; color:#000;">一斉送信</button>
+        </div>
+        <div id="broadcastMsg" class="msg"></div>
+      </section>
+
+      <!-- 2. Create Tenant -->
+      <section class="card" style="margin-bottom: 20px;">
+        <h3>2. 店舗（tenant）作成</h3>
+        <div class="row">
+          <input id="tSlug" placeholder="slug（例：a）" />
+          <input id="tName" placeholder="表示名（例：A店）" />
+        </div>
+        <div style="margin-top:10px;">
+          <input id="tPowered" placeholder="Powered by ... (空欄可)" value="BUKIKORE KIKAKU"
+            style="width:100%; padding:8px;" />
+        </div>
+        <button id="createTenantBtn" style="margin-top:10px;">作成</button>
+        <div id="tenantMsg" class="msg"></div>
+      </section>
+
+      <!-- 3. Issue Admin User -->
+      <section class="card" style="margin-bottom: 20px;">
+        <h3>3. 管理ユーザー発行</h3>
+        <div class="row">
+          <input id="uTenant" placeholder="tenant slug（例：a）" />
+          <input id="uName" placeholder="username（例：a-admin）" />
+          <input id="uPass" placeholder="初期パス（6文字以上）" />
+          <button id="createUserBtn">発行</button>
+        </div>
+        <div id="userMsg" class="msg"></div>
+      </section>
+
+      <!-- 4. Tenant List -->
+      <section class="card" style="margin-bottom: 20px;">
+        <h3>4. 店舗一覧</h3>
+        <div class="row">
+          <input type="search" id="tenantSearch" placeholder="店舗名・IDで検索..." style="flex:1; padding:8px;" />
+          <button id="refreshBtn">更新</button>
+        </div>
+        <div id="tenantList" class="list scrollable-list"
+          style="max-height: 400px; overflow-y: auto; border: 1px solid #2d3748; padding: 10px; border-radius: 8px;">
+        </div>
+      </section>
+
+      <!-- 5. Edit Tenant Info (Detail Panel) -->
+      <section id="editTenantPanel" class="card hidden"
+        style="border:1px solid #4a5568; background:#1a202c; margin-bottom: 20px;">
+        <h3>5. 店舗情報修正</h3>
+        <div class="row" style="flex-wrap: wrap; gap: 10px;">
+          <div style="flex: 1; min-width: 200px;">
+            <label style="display:block; font-size:12px; color:#a0aec0;">Slug (固定)</label>
+            <input id="editSlug" readonly
+              style="background:#2d3748; color:#a0aec0; width:100%; box-sizing:border-box;" />
+          </div>
+          <div style="flex: 1; min-width: 200px;">
+            <label style="display:block; font-size:12px; color:#a0aec0;">表示名</label>
+            <input id="editName" placeholder="表示名" style="width:100%; box-sizing:border-box;" />
+          </div>
+          <div style="flex: 1; min-width: 200px;">
+            <label style="display:block; font-size:12px; color:#a0aec0;">Powered by</label>
+            <input id="editPowered" placeholder="Powered by" style="width:100%; box-sizing:border-box;" />
+          </div>
+        </div>
+
+        <div class="row" style="flex-wrap: wrap; gap: 10px; margin-top: 10px;">
+          <div style="flex: 1; min-width: 200px;">
+            <label style="display:block; font-size:12px; color:#a0aec0;">Tenant Slug Ref (確認用)</label>
+            <input id="editTenantSlugRef" readonly
+              style="background:#2d3748; color:#a0aec0; width:100%; box-sizing:border-box;" />
+          </div>
+          <div style="flex: 1; min-width: 200px;">
+            <label style="display:block; font-size:12px; color:#a0aec0;">管理ユーザー名</label>
+            <input id="editUsername" placeholder="username" style="width:100%; box-sizing:border-box;" />
+          </div>
+          <div style="flex: 1; min-width: 200px;">
+            <label style="display:block; font-size:12px; color:#a0aec0;">新パスワード (変更時のみ入力)</label>
+            <input id="editPassword" placeholder="空欄なら変更なし" style="width:100%; box-sizing:border-box;" />
+          </div>
+        </div>
+
+        <div style="margin-top:10px;">
+          <label style="display:block; margin-bottom:5px; font-size:12px; color:#a0aec0;">お知らせ（ゲーム画面上部に表示）</label>
+          <textarea id="editAnnouncement" rows="3"
+            style="width:100%; box-sizing:border-box; background:#0c1420; color:#fff; border:1px solid #2a3950; border-radius:8px; padding:8px;"></textarea>
+        </div>
+
+        <div class="row" style="flex-wrap: wrap; gap: 10px; margin-top: 10px;">
+          <div style="flex: 1; min-width: 200px;">
+            <label style="display:block; font-size:12px; color:#a0aec0;">管理URL</label>
+            <input id="editAdminUrl" readonly
+              style="background:#2d3748; color:#a0aec0; width:100%; box-sizing:border-box;" />
+          </div>
+          <div style="flex: 1; min-width: 200px;">
+            <label style="display:block; font-size:12px; color:#a0aec0;">ゲームURL</label>
+            <input id="editGameUrl" readonly
+              style="background:#2d3748; color:#a0aec0; width:100%; box-sizing:border-box;" />
+          </div>
+        </div>
+
+        <div class="row" style="margin-top:10px; align-items: center;">
+          <button id="saveTenantBtn">保存</button>
+          <button id="cancelEditBtn" style="background:#4a5568;">閉じる</button>
+          <div style="flex:1;"></div>
+          <button id="deleteTenantBtn" style="background:#e53e3e;">削除</button>
+        </div>
+        <div id="editMsg" class="msg"></div>
+      </section>
+
+      <!-- 6. Password Reset (Legacy/Backup) -->
+      <section class="card" style="margin-bottom: 20px;">
+        <h3>6. パスワード再発行（忘れ対応・手動）</h3>
+        <div class="row">
+          <input id="resetUser" placeholder="username（例：a-admin）" />
+          <input id="resetPass" placeholder="新パス（6文字以上）" />
+          <button id="resetBtn">再発行</button>
+        </div>
+        <div id="resetMsg" class="msg"></div>
+      </section>
+  </main>
+
+  <script src="/master.js"></script>
+</body>
+
+</html>
