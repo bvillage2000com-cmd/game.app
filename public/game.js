@@ -178,6 +178,9 @@ async function showResult() {
   }
 }
 
+// Cache meta to avoid async delay on click (iOS fix)
+let cachedMeta = null;
+
 // Logic: Pick Random Video Effect based on Probabilities
 function pickFx(meta) {
   let probs = (meta && meta.effect_probs) ? meta.effect_probs : null;
@@ -185,7 +188,6 @@ function pickFx(meta) {
     try { probs = JSON.parse(probs); } catch (e) { probs = null; }
   }
   if (!probs) probs = { star1: 25, star2: 25, star3: 25, star4: 25 };
-
 
   // Create weighted list
   const pool = [];
@@ -216,16 +218,27 @@ async function startFlow() {
   }
 
   try {
-    const meta = await fetchMeta(); // Fetch latest effect probs
+    // Use cached meta if available, otherwise fetch (but might block iOS sound)
+    const meta = cachedMeta || await fetchMeta();
+
     effectVideo.pause();
     effectVideo.currentTime = 0;
-    effectVideo.muted = true;
+    effectVideo.muted = false; // Enable sound!
+    effectVideo.volume = 1.0;
     effectVideo.playsInline = true;
     effectVideo.src = pickFx(meta);
     effectVideo.load();
-    await effectVideo.play();
+
+    // Attempt play
+    const playPromise = effectVideo.play();
+    if (playPromise !== undefined) {
+      playPromise.catch(e => {
+        console.warn("Video play error:", e);
+        showResult();
+      });
+    }
   } catch (e) {
-    console.warn("Video play error:", e);
+    console.warn("Flow error:", e);
     showResult();
   }
 }
@@ -236,8 +249,8 @@ async function startFlow() {
 
 // 1. Initialize
 (async () => {
-  const meta = await fetchMeta();
-  applyBackground(meta);
+  cachedMeta = await fetchMeta(); // Pre-fetch for iOS
+  applyBackground(cachedMeta);
 
   // Check active images
   const data = await fetchActiveImages();
@@ -294,5 +307,28 @@ if (retryBtn) {
   retryBtn.addEventListener("click", (e) => {
     e.stopPropagation(); // Avoid bubbling to screenResult click
     showScreen("screenStart");
+  });
+}
+
+// 6. Sound Toggle
+const soundToggle = document.getElementById("soundToggle");
+if (soundToggle && effectVideo) {
+  // Update icon based on state
+  const updateIcon = () => {
+    soundToggle.textContent = effectVideo.muted ? "🔇" : "🔊";
+  };
+
+  // Sync on play
+  effectVideo.addEventListener("play", updateIcon);
+  effectVideo.addEventListener("volumechange", updateIcon);
+
+  soundToggle.addEventListener("click", (e) => {
+    e.stopPropagation();
+    effectVideo.muted = !effectVideo.muted;
+    // If we unmute, ensure volume is up
+    if (!effectVideo.muted) {
+      effectVideo.volume = 1.0;
+    }
+    updateIcon();
   });
 }

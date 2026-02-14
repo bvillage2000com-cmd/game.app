@@ -1369,3 +1369,27 @@ body.page-game .videoTapHint {
 .videoTapHint {
   display: none !important;
 }
+
+/* Sound Toggle Button */
+.soundToggle {
+  position: absolute;
+  bottom: 20px;
+  right: 20px;
+  z-index: 1000;
+  background: rgba(0, 0, 0, 0.5);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  color: #fff;
+  font-size: 24px;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.soundToggle:active {
+  background: rgba(255, 255, 255, 0.2);
+}
