@@ -93,9 +93,9 @@ function openEdit(t) {
   editName.value = t.name;
   editPowered.value = t.powered_by || "";
   document.getElementById("editTenantSlugRef").value = t.slug;
-  document.getElementById("editUsername").value = t.username || "";
   document.getElementById("editTenantSlugRef").value = t.slug;
   document.getElementById("editUsername").value = t.username || "";
+  document.getElementById("editInitialPassword").value = t.initial_password || "(不明 - 古いデータ)";
   // password handling moved to below
   editAnnouncement.value = t.announcement || "";
   editAnnouncement.value = t.announcement || "";
