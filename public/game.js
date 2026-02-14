@@ -180,7 +180,12 @@ async function showResult() {
 
 // Logic: Pick Random Video Effect based on Probabilities
 function pickFx(meta) {
-  const probs = (meta && meta.effect_probs) ? meta.effect_probs : { star1: 25, star2: 25, star3: 25, star4: 25 };
+  let probs = (meta && meta.effect_probs) ? meta.effect_probs : null;
+  if (typeof probs === 'string') {
+    try { probs = JSON.parse(probs); } catch (e) { probs = null; }
+  }
+  if (!probs) probs = { star1: 25, star2: 25, star3: 25, star4: 25 };
+
 
   // Create weighted list
   const pool = [];
@@ -259,13 +264,9 @@ if (startBtn) {
 
     // Attempt to prime audio (User Gesture) with silent buffer
     if (!audioPrimed) {
-      try {
-        const silent = new Audio("data:audio/wav;base64,UklGRigAAABXQVZFZm10IBIAAAABAAEARKwAAIhYAQACABAAAABkYXRhAgAAAAEA");
-        await silent.play();
-        audioPrimed = true;
-      } catch (e) {
-        console.log("Audio prime failed", e);
-      }
+      const silent = new Audio("data:audio/wav;base64,UklGRigAAABXQVZFZm10IBIAAAABAAEARKwAAIhYAQACABAAAABkYXRhAgAAAAEA");
+      silent.play().catch(e => console.log("Audio prime failed", e));
+      audioPrimed = true;
     }
 
     await startFlow();
