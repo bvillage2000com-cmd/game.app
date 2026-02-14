@@ -5,9 +5,11 @@ const tenantSlug = parts[1]; // ["g","slug"]
 // DOM Elements
 const screenStart = document.getElementById("screenStart");
 const screenVideo = document.getElementById("screenVideo");
+const screenTap = document.getElementById("screenTap");
 const screenResult = document.getElementById("screenResult");
 
 const startBtn = document.getElementById("startBtn");
+const finalTapBtn = document.getElementById("finalTapBtn");
 const retryBtn = document.getElementById("retryBtn");
 
 const effectVideo = document.getElementById("effectVideo");
@@ -29,7 +31,7 @@ let audioPrimed = false; // user gesture unlock flag
 // Toggle Screens
 function showScreen(id) {
   // Hide all screens
-  [screenStart, screenVideo, screenResult].forEach(el => {
+  [screenStart, screenVideo, screenTap, screenResult].forEach(el => {
     if (el) el.classList.remove("active");
   });
 
@@ -286,11 +288,10 @@ if (startBtn) {
   });
 }
 
-// 3. Video Ended -> Show Result
+// 3. Video Ended -> Show Tap Screen
 if (effectVideo) {
   effectVideo.addEventListener("ended", () => {
-    // Small delay for effect
-    setTimeout(showResult, 500);
+    showScreen("screenTap");
   });
 
   effectVideo.addEventListener("error", () => {
@@ -298,7 +299,15 @@ if (effectVideo) {
   });
 }
 
-// 4. Result Screen Click -> Dismiss (Return to Start) REMOVED
+// 4. Final Tap Button -> Show Result
+if (finalTapBtn) {
+  finalTapBtn.addEventListener("click", (e) => {
+    e.stopPropagation();
+    showResult();
+  });
+}
+
+// 5. Result Screen Click -> Dismiss (Return to Start) REMOVED
 // Only retryBtn should trigger reset
 
 
