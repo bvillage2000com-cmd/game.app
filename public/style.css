@@ -1420,7 +1420,7 @@ body.page-game .videoTapHint {
    ========================= */
 #screenTap {
   background-color: #000;
-  background-image: url("/tap-bg.png");
+  background-image: url("/tap-bg.jpg");
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
