@@ -135,11 +135,13 @@ hr {
   position: relative;
   overflow: hidden;
   box-sizing: border-box;
+  /* Force square with absolute positioning for image stability */
   aspect-ratio: 1 / 1 !important;
-  /* Force square */
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  position: relative;
+  overflow: hidden;
+  box-sizing: border-box;
+  /* Use block/absolute for sturdier AR enforcement */
+  display: block;
 }
 
 /* 1 items: almost full width (max 400px) */
@@ -148,6 +150,9 @@ hr {
 }
 
 .images[data-count="1"] img {
+  position: absolute;
+  top: 0;
+  left: 0;
   width: 100%;
   height: 100%;
   object-fit: cover;
@@ -162,6 +167,9 @@ hr {
 
 .images[data-count="2"] img,
 .images[data-count="4"] img {
+  position: absolute;
+  top: 0;
+  left: 0;
   width: 100%;
   height: 100%;
   object-fit: cover;
@@ -177,13 +185,19 @@ hr {
 }
 
 .images:not([data-count="1"]):not([data-count="2"]):not([data-count="4"]) img {
-
+  position: absolute;
+  top: 0;
+  left: 0;
   width: 100%;
   height: 100%;
   object-fit: cover;
 }
 
 .imgbox img {
+  /* Default base styles */
+  position: absolute;
+  top: 0;
+  left: 0;
   width: 100%;
   height: 100%;
   border-radius: 10px;
@@ -1374,8 +1388,8 @@ body.page-game .videoTapHint {
 /* Sound Toggle Button */
 .soundToggle {
   position: absolute;
-  bottom: 200px;
-  /* Moved up +100px as requested */
+  bottom: 128px;
+  /* Moved down 1.5 buttons (72px) from 200px */
   right: 20px;
   z-index: 1000;
   background: rgba(0, 0, 0, 0.5);
