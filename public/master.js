@@ -112,16 +112,7 @@ function openEdit(t) {
   document.getElementById("editAdminUrl").value = `${origin}/admin/${t.slug}`;
   document.getElementById("editGameUrl").value = `${origin}/g/${t.slug}`;
 
-  // Auto-fill Password
-  // RESET: Default to disabled and empty
-  const passToggle = document.getElementById("editPasswordToggle");
-  const passInput = document.getElementById("editPassword");
 
-  passToggle.checked = false;
-  passInput.value = "";
-  passInput.disabled = true;
-  passInput.style.background = "#4a5568";
-  passInput.style.cursor = "not-allowed";
 
   // Note: We don't auto-fill user password for security/policy, and user requested "change only".
   // So we just leave it blank and disabled.
@@ -161,13 +152,12 @@ document.getElementById("saveTenantBtn").addEventListener("click", async () => {
   const powered_by = editPowered.value.trim();
   const announcement = editAnnouncement.value.trim();
   const username = document.getElementById("editUsername").value.trim();
-  const password = document.getElementById("editPassword").value.trim();
   const plan = document.querySelector('input[name="editPlan"]:checked')?.value || "normal";
 
   const res = await fetch("/api/master/tenants/update", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ slug, name, plan, powered_by, announcement, username, password }),
+    body: JSON.stringify({ slug, name, plan, powered_by, announcement, username }),
   });
 
   if (!res.ok) {
@@ -216,22 +206,7 @@ document.getElementById("backFromEditBtn").addEventListener("click", () => {
   editTenantPanel.classList.add("hidden");
 });
 
-document.getElementById("editPasswordToggle").addEventListener("change", (e) => {
-  const passInput = document.getElementById("editPassword");
-  if (e.target.checked) {
-    passInput.disabled = false;
-    passInput.style.background = "#fff";
-    passInput.style.cursor = "text";
-    passInput.style.color = "#000";
-    passInput.focus();
-  } else {
-    passInput.disabled = true;
-    passInput.value = "";
-    passInput.style.background = "#4a5568";
-    passInput.style.cursor = "not-allowed";
-    passInput.style.color = "#a0aec0";
-  }
-});
+
 
 document.getElementById("masterLoginBtn").addEventListener("click", async () => {
   masterMsg.textContent = "";
