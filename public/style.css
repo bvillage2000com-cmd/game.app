@@ -135,7 +135,8 @@ hr {
   position: relative;
   overflow: hidden;
   box-sizing: border-box;
-  aspect-ratio: 1 / 1;
+  aspect-ratio: 1 / 1 !important;
+  /* Force square */
   display: flex;
   align-items: center;
   justify-content: center;
@@ -1373,7 +1374,8 @@ body.page-game .videoTapHint {
 /* Sound Toggle Button */
 .soundToggle {
   position: absolute;
-  bottom: 20px;
+  bottom: 200px;
+  /* Moved up +100px as requested */
   right: 20px;
   z-index: 1000;
   background: rgba(0, 0, 0, 0.5);
