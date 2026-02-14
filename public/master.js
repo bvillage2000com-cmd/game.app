@@ -101,10 +101,18 @@ function openEdit(t) {
   document.getElementById("editAdminUrl").value = `${origin}/admin/${t.slug}`;
   document.getElementById("editGameUrl").value = `${origin}/g/${t.slug}`;
 
-  // Auto-fill Password if just issued for this tenant
-  if (lastIssued.slug === t.slug && lastIssued.password) {
+  // Auto-fill Password
+  // Priority 1: Value in "Initial Password" (Section 3)
+  const initialPassInput = document.getElementById("uPass").value.trim();
+  if (initialPassInput) {
+    document.getElementById("editPassword").value = initialPassInput;
+  }
+  // Priority 2: Recently issued password for this tenant
+  else if (lastIssued.slug === t.slug && lastIssued.password) {
     document.getElementById("editPassword").value = lastIssued.password;
-  } else {
+  }
+  // Default: Empty
+  else {
     document.getElementById("editPassword").value = "";
   }
 
