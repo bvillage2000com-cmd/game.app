@@ -142,10 +142,10 @@ hr {
 
 /* 1 items: almost full width (max 400px -> 800px) but fit within screen height */
 .images[data-count="1"] .imgbox {
-  width: min(100%, 70vh);
-  /* Limit to 70% of screen height to avoid cutoff */
-  max-width: 600px;
-  /* Also cap at 600px */
+  width: min(100%, 50vh);
+  /* Limit to 50% of screen height to avoid cutoff */
+  max-width: 400px;
+  /* Cap at 400px */
   margin: 0 auto;
   /* Center it */
 }
@@ -1073,7 +1073,8 @@ body.page-game .startBtnImg:focus-visible {
 /* Desktop tuning (startbgbtn_tuned_1770834452) */
 @media (min-width: 1024px) {
   body.page-game #screenStart .startUi {
-    padding-bottom: 12vh;
+    padding-bottom: 4vh;
+    /* Lowered from 12vh to 4vh */
   }
 
   body.page-game .startBtnImg {
@@ -1428,12 +1429,20 @@ body.page-game .videoTapHint {
   background-color: #000;
   background-image: url("/tap-bg.jpg");
   background-size: cover;
+  /* Default cover for mobile */
   background-position: center;
   background-repeat: no-repeat;
   display: flex;
   justify-content: center;
   align-items: center;
   z-index: 100;
+}
+
+@media (min-width: 1024px) {
+  #screenTap {
+    background-size: contain;
+    /* Contain for PC to prevent cutoff */
+  }
 }
 
 .tapContent {
