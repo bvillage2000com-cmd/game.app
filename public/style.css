@@ -144,9 +144,9 @@ hr {
   display: block;
 }
 
-/* 1 items: almost full width (max 400px) */
+/* 1 items: almost full width (max 400px -> 800px) */
 .images[data-count="1"] .imgbox {
-  width: min(100%, 400px);
+  width: min(100%, 800px);
 }
 
 .images[data-count="1"] img {
@@ -162,7 +162,7 @@ hr {
 .images[data-count="2"] .imgbox,
 .images[data-count="4"] .imgbox {
   width: calc(50% - 6px);
-  max-width: 300px;
+  max-width: 600px;
 }
 
 .images[data-count="2"] img,
@@ -181,7 +181,7 @@ hr {
   width: calc(33.333% - 8px);
   /* min-width: 140px; */
   /* flex-grow: 1; <-- removed to prevent last item expansion */
-  max-width: 220px;
+  max-width: 440px;
 }
 
 .images:not([data-count="1"]):not([data-count="2"]):not([data-count="4"]) img {
