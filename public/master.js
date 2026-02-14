@@ -100,6 +100,13 @@ function openEdit(t) {
   editAnnouncement.value = t.announcement || "";
   editAnnouncement.value = t.announcement || "";
 
+  // Set Plan Radio
+  const plan = t.plan || "normal";
+  const radios = document.getElementsByName("editPlan");
+  for (const r of radios) {
+    r.checked = (r.value === plan);
+  }
+
   // URL Display
   const origin = location.origin;
   document.getElementById("editAdminUrl").value = `${origin}/admin/${t.slug}`;
@@ -155,11 +162,12 @@ document.getElementById("saveTenantBtn").addEventListener("click", async () => {
   const announcement = editAnnouncement.value.trim();
   const username = document.getElementById("editUsername").value.trim();
   const password = document.getElementById("editPassword").value.trim();
+  const plan = document.querySelector('input[name="editPlan"]:checked')?.value || "normal";
 
   const res = await fetch("/api/master/tenants/update", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ slug, name, powered_by, announcement, username, password }),
+    body: JSON.stringify({ slug, name, plan, powered_by, announcement, username, password }),
   });
 
   if (!res.ok) {

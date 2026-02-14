@@ -28,6 +28,17 @@ async function loadMeta() {
     const tenantNameEl = document.getElementById("tenantName");
     if (tenantNameEl) tenantNameEl.textContent = `(${meta.name})`;
 
+    // Plan Badge
+    const planBadge = document.getElementById("planBadge");
+    if (planBadge) {
+      if (meta.plan === 'premium') {
+        planBadge.innerHTML = '<span style="background:#ecc94b; color:#000; padding:2px 6px; border-radius:4px; font-size:0.5em; vertical-align:middle;">PREMIUM</span>';
+      } else {
+        // Optional: Show Normal or nothing
+        planBadge.innerHTML = '<span style="background:#718096; color:#fff; padding:2px 6px; border-radius:4px; font-size:0.5em; vertical-align:middle;">NORMAL</span>';
+      }
+    }
+
     // Populate Effect Settings
     if (meta.effect_probs) {
       document.getElementById("star1").value = meta.effect_probs.star1 ?? 25;

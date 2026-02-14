@@ -446,7 +446,7 @@ app.get("/api/:slug/meta", (req, res) => {
   if (!tenant) return res.status(404).json({ error: "tenant not found" });
   let effect_probs = { star1: 25, star2: 25, star3: 25, star4: 25 };
   try { if (tenant.effect_probs) effect_probs = JSON.parse(tenant.effect_probs); } catch (e) { }
-  res.json({ slug: tenant.slug, name: tenant.name, powered_by: tenant.powered_by || "", announcement: tenant.announcement || "", bg_pc_url: tenant.bg_pc ? `/uploads/${tenant.bg_pc}` : "", bg_sp_url: tenant.bg_sp ? `/uploads/${tenant.bg_sp}` : "", effect_probs });
+  res.json({ slug: tenant.slug, name: tenant.name, plan: tenant.plan || "normal", powered_by: tenant.powered_by || "", announcement: tenant.announcement || "", bg_pc_url: tenant.bg_pc ? `/uploads/${tenant.bg_pc}` : "", bg_sp_url: tenant.bg_sp ? `/uploads/${tenant.bg_sp}` : "", effect_probs });
 });
 app.get("/api/:slug/active-images", (req, res) => {
   const { slug } = req.params;
@@ -461,7 +461,7 @@ app.get("/api/:slug/active-images", (req, res) => {
   let effect_probs = { star1: 25, star2: 25, star3: 25, star4: 25 };
   try { if (tenant.effect_probs) effect_probs = JSON.parse(tenant.effect_probs); } catch (e) { }
 
-  res.json({ now, tenant: { slug: tenant.slug, name: tenant.name, powered_by: tenant.powered_by || "", announcement: tenant.announcement || "", bg_pc_url: tenant.bg_pc ? `/uploads/${tenant.bg_pc}` : "", bg_sp_url: tenant.bg_sp ? `/uploads/${tenant.bg_sp}` : "", effect_probs }, images: rows });
+  res.json({ now, tenant: { slug: tenant.slug, name: tenant.name, plan: tenant.plan || "normal", powered_by: tenant.powered_by || "", announcement: tenant.announcement || "", bg_pc_url: tenant.bg_pc ? `/uploads/${tenant.bg_pc}` : "", bg_sp_url: tenant.bg_sp ? `/uploads/${tenant.bg_sp}` : "", effect_probs }, images: rows });
 });
 
 app.get("/", (req, res) => res.send("OK. Use /master to create tenants/users. Game: /g/:slug  Admin: /admin/:slug"));
