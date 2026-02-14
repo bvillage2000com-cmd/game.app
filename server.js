@@ -54,6 +54,7 @@ CREATE TABLE IF NOT EXISTS images (
 
 
 // 既存DBのアップデート（背景カラム追加）
+try { db.exec("ALTER TABLE tenants ADD COLUMN plan TEXT DEFAULT 'normal'"); } catch (e) { }
 try { db.exec("ALTER TABLE tenants ADD COLUMN bg_pc TEXT"); } catch (e) { }
 try { db.exec("ALTER TABLE tenants ADD COLUMN bg_sp TEXT"); } catch (e) { }
 try { db.exec("ALTER TABLE tenants ADD COLUMN announcement TEXT"); } catch (e) { }
@@ -96,7 +97,7 @@ function requireLoginForSlug(req, res, next) {
 }
 
 function tenantBySlug(slug) {
-  return db.prepare("SELECT id, slug, name, powered_by, bg_pc, bg_sp, announcement, effect_probs FROM tenants WHERE slug=?").get(slug);
+  return db.prepare("SELECT id, slug, name, plan, powered_by, bg_pc, bg_sp, announcement, effect_probs FROM tenants WHERE slug=?").get(slug);
 }
 
 // upload
@@ -140,7 +141,7 @@ app.get("/api/master/tenants", requireMaster, (req, res) => {
   // Join users to get the admin username (GROUP BY t.id to pick one if multiples exist, though schema says unique username)
   // Logic: picking first user found for the tenant
   const rows = db.prepare(`
-    SELECT t.id, t.slug, t.name, t.powered_by, t.announcement, t.created_at, u.username
+    SELECT t.id, t.slug, t.name, t.plan, t.powered_by, t.announcement, t.created_at, u.username
     FROM tenants t
     LEFT JOIN users u ON t.id = u.tenant_id
     GROUP BY t.id
@@ -149,27 +150,27 @@ app.get("/api/master/tenants", requireMaster, (req, res) => {
   res.json(rows);
 });
 app.post("/api/master/tenants", requireMaster, (req, res) => {
-  const { slug, name, powered_by } = req.body;
+  const { slug, name, plan, powered_by } = req.body;
   if (!slugOk(slug)) return res.status(400).json({ error: "invalid slug" });
   if (!name || typeof name !== "string") return res.status(400).json({ error: "invalid name" });
   try {
-    const info = db.prepare("INSERT INTO tenants (slug, name, powered_by, created_at) VALUES (?, ?, ?, ?)")
-      .run(slug, name, powered_by || "", Date.now());
+    const info = db.prepare("INSERT INTO tenants (slug, name, plan, powered_by, created_at) VALUES (?, ?, ?, ?, ?)")
+      .run(slug, name, plan || "normal", powered_by || "", Date.now());
     res.json({ ok: true, id: info.lastInsertRowid });
   } catch (e) {
     res.status(400).json({ error: "slug already exists" });
   }
 });
 app.post("/api/master/tenants/update", requireMaster, (req, res) => {
-  const { slug, name, powered_by, announcement, username, password } = req.body;
+  const { slug, name, plan, powered_by, announcement, username, password } = req.body;
   if (!slugOk(slug)) return res.status(400).json({ error: "invalid slug" });
 
   const tenant = tenantBySlug(slug);
   if (!tenant) return res.status(404).json({ error: "tenant not found" });
 
   // Update tenant info
-  const updateTenant = db.prepare("UPDATE tenants SET name=?, powered_by=?, announcement=? WHERE slug=?");
-  updateTenant.run(name || tenant.name, powered_by || "", announcement || "", slug);
+  const updateTenant = db.prepare("UPDATE tenants SET name=?, plan=?, powered_by=?, announcement=? WHERE slug=?");
+  updateTenant.run(name || tenant.name, plan || tenant.plan || "normal", powered_by || "", announcement || "", slug);
 
   // Update user info if provided
   if (username) {

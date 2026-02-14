@@ -60,8 +60,12 @@ function renderTenantList(tenants) {
     btn.onmouseover = () => btn.style.background = "#2d3748";
     btn.onmouseout = () => btn.style.background = "transparent";
 
+    const planBadge = t.plan === 'premium'
+      ? '<span style="background:#ecc94b; color:#000; padding:2px 6px; border-radius:4px; font-size:10px; font-weight:bold; margin-left:8px;">PREMIUM</span>'
+      : '<span style="background:#718096; color:#fff; padding:2px 6px; border-radius:4px; font-size:10px; margin-left:8px;">NORMAL</span>';
+
     btn.innerHTML = `
-      <span>${t.name} <span style="color:#718096; font-size:0.9em;">(${t.slug})</span></span>
+      <span>${t.name} <span style="color:#718096; font-size:0.9em;">(${t.slug})</span>${planBadge}</span>
       ${t.announcement ? '<span style="color:#fbbf24; font-size:12px;">★</span>' : ''}
     `;
 
@@ -102,19 +106,19 @@ function openEdit(t) {
   document.getElementById("editGameUrl").value = `${origin}/g/${t.slug}`;
 
   // Auto-fill Password
-  // Priority 1: Value in "Initial Password" (Section 3)
-  const initialPassInput = document.getElementById("uPass").value.trim();
-  if (initialPassInput) {
-    document.getElementById("editPassword").value = initialPassInput;
-  }
-  // Priority 2: Recently issued password for this tenant
-  else if (lastIssued.slug === t.slug && lastIssued.password) {
-    document.getElementById("editPassword").value = lastIssued.password;
-  }
-  // Default: Empty
-  else {
-    document.getElementById("editPassword").value = "";
-  }
+  // RESET: Default to disabled and empty
+  const passToggle = document.getElementById("editPasswordToggle");
+  const passInput = document.getElementById("editPassword");
+
+  passToggle.checked = false;
+  passInput.value = "";
+  passInput.disabled = true;
+  passInput.style.background = "#4a5568";
+  passInput.style.cursor = "not-allowed";
+
+  // Note: We don't auto-fill user password for security/policy, and user requested "change only".
+  // So we just leave it blank and disabled.
+
 
   editMsg.textContent = "";
   window.scrollTo({ top: editTenantPanel.offsetTop - 20, behavior: "smooth" });
@@ -200,6 +204,27 @@ document.getElementById("cancelEditBtn").addEventListener("click", () => {
   editTenantPanel.classList.add("hidden");
 });
 
+document.getElementById("backFromEditBtn").addEventListener("click", () => {
+  editTenantPanel.classList.add("hidden");
+});
+
+document.getElementById("editPasswordToggle").addEventListener("change", (e) => {
+  const passInput = document.getElementById("editPassword");
+  if (e.target.checked) {
+    passInput.disabled = false;
+    passInput.style.background = "#fff";
+    passInput.style.cursor = "text";
+    passInput.style.color = "#000";
+    passInput.focus();
+  } else {
+    passInput.disabled = true;
+    passInput.value = "";
+    passInput.style.background = "#4a5568";
+    passInput.style.cursor = "not-allowed";
+    passInput.style.color = "#a0aec0";
+  }
+});
+
 document.getElementById("masterLoginBtn").addEventListener("click", async () => {
   masterMsg.textContent = "";
   const password = document.getElementById("masterPass").value;
@@ -230,11 +255,12 @@ document.getElementById("createTenantBtn").addEventListener("click", async () =>
     const slug = document.getElementById("tSlug").value.trim();
     const name = document.getElementById("tName").value.trim();
     const powered_by = document.getElementById("tPowered").value.trim();
+    const plan = document.querySelector('input[name="tPlan"]:checked').value;
 
     const res = await fetch("/api/master/tenants", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ slug, name, powered_by }),
+      body: JSON.stringify({ slug, name, powered_by, plan }),
     });
 
     const data = await res.json().catch(() => ({}));

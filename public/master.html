@@ -48,6 +48,10 @@
           <input id="tSlug" placeholder="slug（例：a）" />
           <input id="tName" placeholder="表示名（例：A店）" />
         </div>
+        <div class="row" style="margin-top:10px; align-items: center; gap: 15px;">
+          <label style="color:#fff;"><input type="radio" name="tPlan" value="normal" checked> Normal</label>
+          <label style="color:#ecc94b;"><input type="radio" name="tPlan" value="premium"> Premium</label>
+        </div>
         <div style="margin-top:10px;">
           <input id="tPowered" placeholder="Powered by ... (空欄可)" value="BUKIKORE KIKAKU"
             style="width:100%; padding:8px;" />
@@ -83,6 +87,9 @@
       <!-- 5. Edit Tenant Info (Detail Panel) -->
       <section id="editTenantPanel" class="card hidden"
         style="border:1px solid #4a5568; background:#1a202c; margin-bottom: 20px;">
+        <div class="row" style="margin-bottom: 10px;">
+          <button id="backFromEditBtn" style="background:#4a5568; padding: 5px 15px;">&lt; 戻る</button>
+        </div>
         <h3>5. 店舗情報修正</h3>
         <div class="row" style="flex-wrap: wrap; gap: 10px;">
           <div style="flex: 1; min-width: 200px;">
@@ -111,8 +118,13 @@
             <input id="editUsername" placeholder="username" style="width:100%; box-sizing:border-box;" />
           </div>
           <div style="flex: 1; min-width: 200px;">
-            <label style="display:block; font-size:12px; color:#a0aec0;">初期パスワード (変更時のみ入力)</label>
-            <input id="editPassword" placeholder="空欄なら変更なし" style="width:100%; box-sizing:border-box;" />
+            <label style="display:block; font-size:12px; color:#a0aec0;">初期パスワード</label>
+            <div style="display: flex; align-items: center; gap: 5px; margin-bottom: 5px;">
+              <input type="checkbox" id="editPasswordToggle">
+              <span style="font-size: 12px; color: #cbd5e0;">変更のみ</span>
+            </div>
+            <input id="editPassword" placeholder="空欄なら変更なし" disabled
+              style="width:100%; box-sizing:border-box; background: #4a5568; cursor: not-allowed;" />
           </div>
         </div>
 
