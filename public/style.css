@@ -92,7 +92,8 @@ hr {
   max-width: 100%;
   margin: 0 auto;
   gap: 16px;
-  padding: 0 16px;
+  padding: 0;
+  /* Reduced from 16px to 0 for max width */
   box-sizing: border-box;
 }
 
@@ -105,14 +106,14 @@ hr {
 }
 
 .resultRetryBtn {
-  width: 100%;
-  /* Match width of images/container */
+  width: calc(100% - 32px);
+  /* Add margin back for button */
+  max-width: 400px;
   padding: 12px 0;
   font-size: 16px;
   font-weight: bold;
   margin-top: 8px;
   min-width: 200px;
-  /* Minimum clickable area */
 }
 
 /* Result Images Dynamic Sizing */
@@ -120,9 +121,9 @@ hr {
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
-  gap: 12px;
+  gap: 8px;
+  /* Reduced gap from 12px */
   width: 100%;
-  /* Fill container */
 }
 
 .imgbox {
@@ -135,12 +136,7 @@ hr {
   position: relative;
   overflow: hidden;
   box-sizing: border-box;
-  /* Force square with absolute positioning for image stability */
   aspect-ratio: 1 / 1 !important;
-  position: relative;
-  overflow: hidden;
-  box-sizing: border-box;
-  /* Use block/absolute for sturdier AR enforcement */
   display: block;
 }
 
@@ -161,7 +157,8 @@ hr {
 /* 2 items: side by side */
 .images[data-count="2"] .imgbox,
 .images[data-count="4"] .imgbox {
-  width: calc(50% - 6px);
+  width: calc(50% - 4px);
+  /* Adjust for 8px gap */
   max-width: 600px;
 }
 
@@ -177,11 +174,19 @@ hr {
 
 /* 3 or more: standard grid (auto-fit logic simulated with flex or strict) */
 /* Fallback for count > 2 (excluding 4) */
+/* Changed to 2 columns (50%) on mobile for larger images */
 .images:not([data-count="1"]):not([data-count="2"]):not([data-count="4"]) .imgbox {
-  width: calc(33.333% - 8px);
-  /* min-width: 140px; */
-  /* flex-grow: 1; <-- removed to prevent last item expansion */
-  max-width: 440px;
+  width: calc(50% - 4px);
+  /* 2 columns on mobile */
+  max-width: 300px;
+}
+
+/* Desktop override for 3+ items: 3 columns */
+@media (min-width: 640px) {
+  .images:not([data-count="1"]):not([data-count="2"]):not([data-count="4"]) .imgbox {
+    width: calc(33.333% - 6px);
+    max-width: 220px;
+  }
 }
 
 .images:not([data-count="1"]):not([data-count="2"]):not([data-count="4"]) img {
