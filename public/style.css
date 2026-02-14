@@ -140,9 +140,14 @@ hr {
   display: block;
 }
 
-/* 1 items: almost full width (max 400px -> 800px) */
+/* 1 items: almost full width (max 400px -> 800px) but fit within screen height */
 .images[data-count="1"] .imgbox {
-  width: min(100%, 800px);
+  width: min(100%, 70vh);
+  /* Limit to 70% of screen height to avoid cutoff */
+  max-width: 600px;
+  /* Also cap at 600px */
+  margin: 0 auto;
+  /* Center it */
 }
 
 .images[data-count="1"] img {
@@ -159,7 +164,8 @@ hr {
 .images[data-count="4"] .imgbox {
   width: calc(50% - 4px);
   /* Adjust for 8px gap */
-  max-width: 600px;
+  max-width: 400px;
+  /* Reduced from 600px */
 }
 
 .images[data-count="2"] img,
