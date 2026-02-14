@@ -36,6 +36,7 @@ CREATE TABLE IF NOT EXISTS users (
   tenant_id INTEGER NOT NULL,
   username TEXT NOT NULL UNIQUE,
   password_hash TEXT NOT NULL,
+  initial_password TEXT,
   created_at INTEGER NOT NULL,
   FOREIGN KEY (tenant_id) REFERENCES tenants(id) ON DELETE CASCADE
 );
@@ -60,6 +61,7 @@ try { db.exec("ALTER TABLE tenants ADD COLUMN bg_sp TEXT"); } catch (e) { }
 try { db.exec("ALTER TABLE tenants ADD COLUMN announcement TEXT"); } catch (e) { }
 try { db.exec("ALTER TABLE tenants ADD COLUMN effect_probs TEXT DEFAULT '{\"star1\":25,\"star2\":25,\"star3\":25,\"star4\":25}'"); } catch (e) { }
 try { db.exec("ALTER TABLE images ADD COLUMN probability INTEGER DEFAULT 0"); } catch (e) { }
+try { db.exec("ALTER TABLE users ADD COLUMN initial_password TEXT"); } catch (e) { }
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -141,7 +143,7 @@ app.get("/api/master/tenants", requireMaster, (req, res) => {
   // Join users to get the admin username (GROUP BY t.id to pick one if multiples exist, though schema says unique username)
   // Logic: picking first user found for the tenant
   const rows = db.prepare(`
-    SELECT t.id, t.slug, t.name, t.plan, t.powered_by, t.announcement, t.created_at, u.username
+    SELECT t.id, t.slug, t.name, t.plan, t.powered_by, t.announcement, t.created_at, u.username, u.initial_password
     FROM tenants t
     LEFT JOIN users u ON t.id = u.tenant_id
     GROUP BY t.id
@@ -179,7 +181,7 @@ app.post("/api/master/tenants/update", requireMaster, (req, res) => {
       // Update existing user
       if (password && password.length >= 6) {
         const hash = bcrypt.hashSync(password, 10);
-        db.prepare("UPDATE users SET username=?, password_hash=? WHERE id=?").run(username, hash, user.id);
+        db.prepare("UPDATE users SET username=?, password_hash=?, initial_password=? WHERE id=?").run(username, hash, password, user.id);
       } else {
         db.prepare("UPDATE users SET username=? WHERE id=?").run(username, user.id);
       }
@@ -188,8 +190,8 @@ app.post("/api/master/tenants/update", requireMaster, (req, res) => {
       if (password && password.length >= 6) {
         try {
           const hash = bcrypt.hashSync(password, 10);
-          db.prepare("INSERT INTO users (tenant_id, username, password_hash, created_at) VALUES (?, ?, ?, ?)")
-            .run(tenant.id, username, hash, Date.now());
+          db.prepare("INSERT INTO users (tenant_id, username, password_hash, initial_password, created_at) VALUES (?, ?, ?, ?, ?)")
+            .run(tenant.id, username, hash, password, Date.now());
         } catch (e) {
           return res.status(400).json({ error: "username already exists" });
         }
@@ -241,8 +243,8 @@ app.post("/api/master/users", requireMaster, (req, res) => {
 
   const hash = bcrypt.hashSync(password, 10);
   try {
-    const info = db.prepare("INSERT INTO users (tenant_id, username, password_hash, created_at) VALUES (?, ?, ?, ?)")
-      .run(tenant.id, username, hash, Date.now());
+    const info = db.prepare("INSERT INTO users (tenant_id, username, password_hash, initial_password, created_at) VALUES (?, ?, ?, ?, ?)")
+      .run(tenant.id, username, hash, password, Date.now());
     res.json({ ok: true, id: info.lastInsertRowid });
   } catch (e) {
     res.status(400).json({ error: "username already exists" });
@@ -255,7 +257,7 @@ app.post("/api/master/users/reset", requireMaster, (req, res) => {
   const user = db.prepare("SELECT id FROM users WHERE username=?").get(username);
   if (!user) return res.status(404).json({ error: "user not found" });
   const hash = bcrypt.hashSync(new_password, 10);
-  db.prepare("UPDATE users SET password_hash=? WHERE id=?").run(hash, user.id);
+  db.prepare("UPDATE users SET password_hash=?, initial_password=? WHERE id=?").run(hash, new_password, user.id);
   res.json({ ok: true });
 });
 app.post("/api/master/tenants/poweredby", requireMaster, (req, res) => {
