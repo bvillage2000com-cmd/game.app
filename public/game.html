@@ -6,6 +6,34 @@
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Game</title>
   <link rel="stylesheet" href="/style.css?v=2.6" />
+  <style>
+    /* Force PC display fixes directly in HTML to bypass cache issues */
+    @media (min-width: 768px) {
+
+      /* Result Screen: Further reduced size */
+      .images[data-count="1"] .imgbox {
+        width: min(100%, 50vh) !important;
+        max-width: 400px !important;
+        margin: 0 auto !important;
+      }
+
+      /* Start Button: Force lower position */
+      body.page-game #screenStart .startUi {
+        padding-bottom: 2vh !important;
+      }
+
+      body.page-game .startBtnImg {
+        width: min(52vw, 640px) !important;
+        border-radius: 22px !important;
+        margin-bottom: 2vh !important;
+      }
+
+      /* Tap Screen: Fix background cutoff */
+      #screenTap {
+        background-size: contain !important;
+      }
+    }
+  </style>
 </head>
 
 <body class="page-game">
