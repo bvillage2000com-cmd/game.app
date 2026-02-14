@@ -257,21 +257,15 @@ if (startBtn) {
   startBtn.addEventListener("click", async (e) => {
     e.preventDefault();
 
-    // Attempt to prime audio (User Gesture)
-    if (!audioPrimed && kinFla) {
+    // Attempt to prime audio (User Gesture) with silent buffer
+    if (!audioPrimed) {
       try {
-        kinFla.muted = true;
-        await kinFla.play();
-        kinFla.pause();
-        kinFla.currentTime = 0;
-        kinFla.muted = false;
+        const silent = new Audio("data:audio/wav;base64,UklGRigAAABXQVZFZm10IBIAAAABAAEARKwAAIhYAQACABAAAABkYXRhAgAAAAEA");
+        await silent.play();
         audioPrimed = true;
       } catch (e) {
-        // ignore
         console.log("Audio prime failed", e);
       }
-    } else {
-      audioPrimed = true;
     }
 
     await startFlow();
