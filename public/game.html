@@ -24,6 +24,19 @@
         /* Fix cutoff issue */
       }
 
+      /* Multi-item grid (3, 5, etc.): Force smaller size on PC to fit screen */
+      .images:not([data-count="1"]):not([data-count="2"]):not([data-count="4"]) .imgbox {
+        width: min(30%, 18vh) !important;
+        max-width: 150px !important;
+      }
+
+      /* 2 and 4 items: Reduce size */
+      .images[data-count="2"] .imgbox,
+      .images[data-count="4"] .imgbox {
+        width: min(45%, 25vh) !important;
+        max-width: 200px !important;
+      }
+
       /* Start Button: Force lower position (Moved down significantly) */
       body.page-game #screenStart .startUi {
         margin-top: 320px !important;
