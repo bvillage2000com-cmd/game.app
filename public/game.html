@@ -15,8 +15,8 @@
         width: min(25%, 15vh) !important;
         max-width: 150px !important;
         margin: 0 auto !important;
-        aspect-ratio: auto !important;
-        /* Allow natural aspect ratio if needed, or keep square but contain */
+        aspect-ratio: 1 / 1 !important;
+        /* Restore square ratio to prevent height collapse */
       }
 
       .images[data-count="1"] img {
